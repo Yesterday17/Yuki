@@ -1,17 +1,5 @@
 import { Application } from "probot";
-
-// SuperUsers can ignore some checks
-// such as issue meta check
-const superUsers = [
-  "3TUSK",
-  "SeraphJACK",
-  "SihenZhang",
-  "Snownee",
-  "TartaricAcid",
-  "tdiant",
-  "TROU2004",
-  "Yesterday17",
-];
+import { addLabel, closeIssue, commentIssue, isSuperUser } from "./utils";
 
 export = (app: Application) => {
   app.on("issues.opened", async (context) => {
@@ -21,41 +9,28 @@ export = (app: Application) => {
     const titleMatch = title.match(/^\[([^\]]+)\]/);
     if (!titleMatch) {
       // invalid title
-      const issueComment = context.issue({
-        body: "Thanks for opening this issue!",
-      });
-      await context.github.issues.createComment(issueComment);
+      await commentIssue(context, "Thanks for opening this issue!");
       return;
     }
 
     const meta = titleMatch[1];
     switch (meta) {
       case "New Content Request":
-        await context.github.issues.addLabels(
-          context.issue({ labels: ["Status: Pending"] }),
-        );
+        await addLabel(context, "Type: New Content");
         break;
       case "Erratum/Errata":
-        await context.github.issues.addLabels(
-          context.issue({ labels: ["Status: Pending"] }),
-        );
+        await addLabel(context, "Type: Errata");
         break;
       default:
-        if (!superUsers.includes(user)) {
-          // Invalid meta
-          await context.github.issues.createComment(
-            context.issue({
-              body: `Invalid meta: ${meta}, Closing.`,
-            }),
-          );
-          // Close
+        // Invalid meta & Not SuperUser
+        if (!isSuperUser(user)) {
+          await commentIssue(context, `Invalid meta: ${meta}, Closing.`);
+          closeIssue(context);
         }
         break;
     }
 
-    await context.github.issues.addLabels(
-      context.issue({ labels: ["Status: Pending"] }),
-    );
+    await addLabel(context, "Status: Pending");
   });
 
   app.on("issue_comment", async (context) => {
