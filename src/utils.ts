@@ -14,7 +14,7 @@ export async function closeIssue(context: Context) {
     number: context.payload.issue.number,
   };
 
-  context.github.issues.update({ ...params, state: "closed" });
+  await context.github.issues.update({ ...params, state: "closed" });
 }
 
 export async function addLabel(context: Context, tag: string) {
@@ -38,5 +38,6 @@ export function isSuperUser(user: string) {
     "TROU2004",
     "Yesterday17",
   ];
+
   return superUsers.includes(user);
 }

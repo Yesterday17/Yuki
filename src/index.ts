@@ -7,9 +7,10 @@ export = (app: Application) => {
     const user: string = context.payload.issue.user.login;
 
     const titleMatch = title.match(/^\[([^\]]+)\]/);
-    if (!titleMatch) {
+    if (titleMatch === null) {
       // invalid title
-      await commentIssue(context, "Thanks for opening this issue!");
+      await commentIssue(context, "Invalid title format!");
+      await closeIssue(context);
       return;
     }
 
@@ -25,19 +26,19 @@ export = (app: Application) => {
         // Invalid meta & Not SuperUser
         if (!isSuperUser(user)) {
           await commentIssue(context, `Invalid meta: ${meta}, Closing.`);
-          closeIssue(context);
+          await closeIssue(context);
+          return;
         }
-        break;
     }
 
     await addLabel(context, "Status: Pending");
   });
 
   app.on("issue_comment", async (context) => {
-    app.log(context);
+    // app.log(context);
   });
 
   app.on("pull_request", async (context) => {
-    app.log(context);
+    // app.log(context);
   });
 };
