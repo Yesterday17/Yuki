@@ -60,7 +60,7 @@ export default class Git {
   public static async push(dir: string) {
     const repo = Git.repos.get(dir);
     if (repo) {
-      return repo.push("origin", "master", {});
+      return repo.push();
     }
     return Promise.reject("Repository not initialized!");
   }
