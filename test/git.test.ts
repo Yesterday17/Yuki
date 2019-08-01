@@ -71,7 +71,10 @@ describe("Git", () => {
 
   test("git-pr-commit", async (done) => {
     try {
-      await Git.commit("build", `${id}: ${Date.now()}`);
+      await Git.commit(
+        "build",
+        `feat(pr. ${id}): Updated automatically at timestamp ${Date.now()}`,
+      );
       expect(1).toBe(1);
       done();
     } catch (e) {

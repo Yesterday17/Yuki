@@ -18,7 +18,7 @@ export default class Git {
 
   public static async clone(dir: string, repo: string, branch?: string) {
     const firstRun = !fs.existsSync(path.resolve(".", dir));
-    const config = ["--depth", 1];
+    const config: any[] = []; // ["--depth", 1];
 
     if (firstRun) {
       fs.mkdirSync(path.resolve(".", dir));
