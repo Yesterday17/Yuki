@@ -2,3 +2,7 @@ node_modules
 lib
 .env
 *.log
+config.json
+
+repo
+build

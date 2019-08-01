@@ -1,5 +1,8 @@
 import { Application } from "probot";
+import Git from "./git";
 import { addLabel, closeIssue, commentIssue, isSuperUser } from "./utils";
+
+Git.init();
 
 export = (app: Application) => {
   app.on("issues.opened", async (context) => {
@@ -38,7 +41,8 @@ export = (app: Application) => {
     // app.log(context);
   });
 
-  app.on("pull_request", async (context) => {
-    // app.log(context);
-  });
+  app.on(
+    ["pull_request.opened", "pull_request.edited", "pull_request.synchronize"],
+    Git.onPullRequestCreated,
+  );
 };

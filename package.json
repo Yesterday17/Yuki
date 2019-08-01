@@ -22,6 +22,7 @@
   "dependencies": {
     "nock": "^10.0.0",
     "probot": "^9.2.20",
+    "simple-git": "^1.124.0",
     "tslint": "^5.18.0"
   },
   "devDependencies": {
