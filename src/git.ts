@@ -3,32 +3,34 @@ import fs from "fs";
 import path from "path";
 import { Context } from "probot";
 import simplegit from "simple-git/promise";
-import config from "../config.json";
 
 export default class Git {
   public static async init() {
     return Promise.all([
       Git.clone(
         "build",
-        `https://${config.username}:${
-          config.password
-        }@gitee.com/yesterday17/harbinger-preview.git`,
+        "git@github.com:TeamCovertDragon/Harbinger.git",
+        "gh-pages",
       ),
-      Git.clone("repo", "https://github.com/TeamCovertDragon/Harbinger.git"),
+      Git.clone("repo", "git@github.com:TeamCovertDragon/Harbinger.git"),
     ]);
   }
 
-  public static async clone(dir: string, repo: string) {
+  public static async clone(dir: string, repo: string, branch?: string) {
     const firstRun = !fs.existsSync(path.resolve(".", dir));
+    const config: { [key: string]: any } = { "--depth": 1 };
+
     if (firstRun) {
       fs.mkdirSync(path.resolve(".", dir));
     }
 
+    if (branch) {
+      config["--branch"] = branch;
+    }
+
     const git = simplegit(path.resolve(".", dir));
     Git.repos.set(dir, git);
-    return firstRun
-      ? git.clone(repo, path.resolve(".", dir), { "--depth": 1 })
-      : "";
+    return firstRun ? git.clone(repo, path.resolve(".", dir), config) : "";
   }
 
   public static async pull(dir: string, branch: string) {
@@ -97,6 +99,7 @@ export default class Git {
       let fail: string = "";
       try {
         await Git.init();
+        await Git.pull("build", "gh-pages");
         await Git.pull("repo", `pull/${id}/head:pull/${id}`);
         await Git.checkout("repo", `pull/${id}`);
         child_process.execSync(`gitbook install ${path.resolve(".", "repo")}`);
@@ -108,7 +111,10 @@ export default class Git {
           )}`,
         );
         await Git.addAll("build");
-        await Git.commit("build", `${id}: ${Date.now()}`);
+        await Git.commit(
+          "build",
+          `feat(pr. ${id}): Updated automatically at timestamp ${Date.now()}`,
+        );
         await Git.push("build");
       } catch (e) {
         fail = String(e) !== "" ? String(e) : "Unknown Reason";
@@ -120,9 +126,7 @@ export default class Git {
         context: "Yuki",
         state: fail === "" ? "success" : "failure",
         description:
-          fail === ""
-            ? `https://yesterday17.gitee.io/harbinger-preview/${id}/`
-            : fail,
+          fail === "" ? `https://covertdragon.team/Harbinger/${id}/` : fail,
       });
     });
   }

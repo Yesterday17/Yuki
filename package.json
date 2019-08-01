@@ -1,6 +1,6 @@
 {
   "name": "yuki",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "やっぱり……いい女には、たばこと屋上と……そしてヒラヒラ服だわね……",
   "author": "Yesterday17",
   "license": "MIT",
@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "execute": "probot run ./lib/src/index.js",
+    "execute": "probot run ./lib/index.js",
     "start": "yarn build && yarn execute",
     "test": "jest",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
