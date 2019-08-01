@@ -18,14 +18,14 @@ export default class Git {
 
   public static async clone(dir: string, repo: string, branch?: string) {
     const firstRun = !fs.existsSync(path.resolve(".", dir));
-    const config: { [key: string]: any } = { "--depth": 1 };
+    const config = ["--depth", 1];
 
     if (firstRun) {
       fs.mkdirSync(path.resolve(".", dir));
     }
 
     if (branch) {
-      config["--branch"] = branch;
+      config.push("--branch", branch);
     }
 
     const git = simplegit(path.resolve(".", dir));
