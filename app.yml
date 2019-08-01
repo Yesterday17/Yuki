@@ -14,22 +14,9 @@ default_events:
   - pull_request_review_comment
 
 default_permissions:
-  # Checks on code.
-  # https://developer.github.com/v3/apps/permissions/#permission-on-checks
   checks: write
-
-  # Repository contents, commits, branches, downloads, releases, and merges.
-  # https://developer.github.com/v3/apps/permissions/#permission-on-contents
   contents: write
-
-  # Issues and related comments, assignees, labels, and milestones.
-  # https://developer.github.com/v3/apps/permissions/#permission-on-issues
   issues: write
-
-  # Search repositories, list collaborators, and access repository metadata.
-  # https://developer.github.com/v3/apps/permissions/#metadata-permissions
   metadata: read
-
-  # Pull requests and related comments, assignees, labels, milestones, and merges.
-  # https://developer.github.com/v3/apps/permissions/#permission-on-pull-requests
   pull_requests: write
+  statuses: write
