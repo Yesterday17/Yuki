@@ -132,7 +132,9 @@ export default class Git {
           context: "Yuki",
           state: fail === "" ? "success" : "failure",
           description:
-            fail === "" ? `https://covertdragon.team/Harbinger/${id}/` : fail,
+            fail === ""
+              ? `https://teamcovertdragon.github.io/Harbinger/${id}/`
+              : fail,
         });
       } catch (e) {
         // console.error(e);
