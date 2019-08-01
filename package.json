@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "execute": "probot run ./lib/index.js",
+    "execute": "probot run ./lib/src/index.js",
     "start": "yarn build && yarn execute",
     "test": "jest",
     "test:watch": "jest --watch --notify --notifyMode=change --coverage"
