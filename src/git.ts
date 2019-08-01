@@ -33,7 +33,7 @@ export default class Git {
     return firstRun ? git.clone(repo, path.resolve(".", dir), config) : "";
   }
 
-  public static async pull(dir: string, branch: string) {
+  public static async pull(dir: string, branch?: string) {
     const repo = Git.repos.get(dir);
     if (repo) {
       return repo.pull("origin", branch);
@@ -103,7 +103,7 @@ export default class Git {
       let fail: string = "";
       try {
         await Git.init();
-        await Git.pull("build", "gh-pages");
+        await Git.pull("build");
         await Git.pull("repo", `pull/${id}/head:pull/${id}`);
         await Git.checkout("repo", `pull/${id}`);
         child_process.execSync(`gitbook install ${path.resolve(".", "repo")}`);
@@ -121,7 +121,7 @@ export default class Git {
         );
         await Git.push("build");
       } catch (e) {
-        fail = String(e) !== "" ? String(e) : "Unknown Reason";
+        fail = String(e) !== "" ? String(e).substr(0, 130) : "Unknown Reason";
       }
 
       try {
