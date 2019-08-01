@@ -111,7 +111,7 @@ export default class Git {
         await Git.commit("build", `${id}: ${Date.now()}`);
         await Git.push("build");
       } catch (e) {
-        fail = String(e) === "" ? String(e) : "Unknown Reason";
+        fail = String(e) !== "" ? String(e) : "Unknown Reason";
       }
 
       await context.github.repos.createStatus({
