@@ -122,6 +122,7 @@ export default class Git {
         await Git.push("build");
       } catch (e) {
         fail = String(e) !== "" ? String(e).substr(0, 130) : "Unknown Reason";
+        console.error(e);
       }
 
       try {
