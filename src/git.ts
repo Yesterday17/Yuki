@@ -96,7 +96,7 @@ export default class Git {
         description: "Generating preview pages...",
       });
     } catch (e) {
-      console.error(e);
+      // console.error(e);
     }
 
     Git.waitChain.then(async () => {
@@ -134,7 +134,7 @@ export default class Git {
             fail === "" ? `https://covertdragon.team/Harbinger/${id}/` : fail,
         });
       } catch (e) {
-        console.error(e);
+        // console.error(e);
       }
     });
   }
