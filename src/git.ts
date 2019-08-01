@@ -87,13 +87,17 @@ export default class Git {
     const { sha } = context.payload.pull_request.head;
     const id = pr.number;
 
-    await context.github.repos.createStatus({
-      ...repo,
-      sha,
-      context: "Yuki",
-      state: "pending",
-      description: "Generating preview pages...",
-    });
+    try {
+      await context.github.repos.createStatus({
+        ...repo,
+        sha,
+        context: "Yuki",
+        state: "pending",
+        description: "Generating preview pages...",
+      });
+    } catch (e) {
+      console.error(e);
+    }
 
     Git.waitChain.then(async () => {
       let fail: string = "";
@@ -120,14 +124,18 @@ export default class Git {
         fail = String(e) !== "" ? String(e) : "Unknown Reason";
       }
 
-      await context.github.repos.createStatus({
-        ...repo,
-        sha,
-        context: "Yuki",
-        state: fail === "" ? "success" : "failure",
-        description:
-          fail === "" ? `https://covertdragon.team/Harbinger/${id}/` : fail,
-      });
+      try {
+        await context.github.repos.createStatus({
+          ...repo,
+          sha,
+          context: "Yuki",
+          state: fail === "" ? "success" : "failure",
+          description:
+            fail === "" ? `https://covertdragon.team/Harbinger/${id}/` : fail,
+        });
+      } catch (e) {
+        console.error(e);
+      }
     });
   }
   private static repos: Map<string, simplegit.SimpleGit> = new Map();

@@ -2,6 +2,7 @@
   "extends": "tslint:recommended",
   "rules": {
     "object-literal-sort-keys": false,
-    "no-var-requires": false
+    "no-var-requires": false,
+    "no-console": false
   }
 }
