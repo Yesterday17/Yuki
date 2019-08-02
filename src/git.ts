@@ -131,6 +131,10 @@ export default class Git {
           sha,
           context: "Yuki",
           state: fail === "" ? "success" : "failure",
+          target_url:
+            fail === ""
+              ? `https://teamcovertdragon.github.io/Harbinger/${id}/`
+              : `https://github.com/TeamCovertDragon/Harbinger/pull/${id}`,
           description:
             fail === ""
               ? `https://teamcovertdragon.github.io/Harbinger/${id}/`
