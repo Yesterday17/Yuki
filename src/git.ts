@@ -33,53 +33,37 @@ export default class Git {
     return firstRun ? git.clone(repo, path.resolve(".", dir), config) : "";
   }
 
-  public static async pull(dir: string, branch?: string) {
+  public static repoCheckGenerator(
+    dir: string,
+    callback: (repo: simplegit.SimpleGit) => any,
+  ) {
     const repo = Git.repos.get(dir);
     if (repo) {
-      return repo.pull("origin", branch);
+      return callback(repo);
     }
     return Promise.reject("Repository not initialized!");
   }
 
-  public static async fetch(dir: string, ref: string) {
-    const repo = Git.repos.get(dir);
-    if (repo) {
-      return repo.fetch("origin", ref);
-    }
-    return Promise.reject("Repository not initialized!");
-  }
+  public static pull = async (dir: string, branch?: string) =>
+    Git.repoCheckGenerator(dir, (repo) => repo.pull("origin", branch))
 
-  public static async checkout(dir: string, branch: string) {
-    const repo = Git.repos.get(dir);
-    if (repo) {
-      return repo.checkout(branch);
-    }
-    return Promise.reject("Repository not initialized!");
-  }
+  public static fetch = async (dir: string, ref: string) =>
+    Git.repoCheckGenerator(dir, (repo) => repo.fetch("origin", ref))
 
-  public static async push(dir: string) {
-    const repo = Git.repos.get(dir);
-    if (repo) {
-      return repo.push();
-    }
-    return Promise.reject("Repository not initialized!");
-  }
+  public static checkout = async (dir: string, branch: string) =>
+    Git.repoCheckGenerator(dir, (repo) => repo.checkout(branch))()
 
-  public static async addAll(dir: string) {
-    const repo = Git.repos.get(dir);
-    if (repo) {
-      return repo.add("*");
-    }
-    return Promise.reject("Repository not initialized!");
-  }
+  public static push = async (dir: string) =>
+    Git.repoCheckGenerator(dir, (repo) => repo.push())
 
-  public static async commit(dir: string, message: string) {
-    const repo = Git.repos.get(dir);
-    if (repo) {
-      return repo.commit(message, undefined, {});
-    }
-    return Promise.reject("Repository not initialized!");
-  }
+  public static addAll = async (dir: string) =>
+    Git.repoCheckGenerator(dir, (repo) => repo.add("*"))
+
+  public static commit = async (dir: string, message: string) =>
+    Git.repoCheckGenerator(dir, (repo) => repo.commit(message, undefined, {}))
+
+  public static branch = async (dir: string): Promise<string[]> =>
+    Git.repoCheckGenerator(dir, (repo) => repo.branch([]))
 
   public static async onPullRequestCreated(context: Context) {
     const pr = context.issue();
@@ -99,13 +83,17 @@ export default class Git {
       // console.error(e);
     }
 
-    Git.waitChain.then(async () => {
+    Git.prWaitChain.then(async () => {
       let fail: string = "";
       try {
         await Git.init();
         await Git.pull("build");
-        await Git.pull("repo", `pull/${id}/head:pull/${id}`);
+        const branches = await Git.branch("repo");
+        if (!branches.includes(`pull/${id}`)) {
+          await Git.pull("repo", `pull/${id}/head:pull/${id}`);
+        }
         await Git.checkout("repo", `pull/${id}`);
+        await Git.pull("repo", `pull/${id}/head`);
         child_process.execSync(`gitbook install ${path.resolve(".", "repo")}`);
         child_process.execSync(
           `gitbook build ${path.resolve(".", "repo")} ${path.resolve(
@@ -121,7 +109,10 @@ export default class Git {
         );
         await Git.push("build");
       } catch (e) {
-        fail = String(e) !== "" ? String(e).substr(0, 130) : "Unknown Reason";
+        fail =
+          String(e) !== ""
+            ? String(e).substr(0, 130)
+            : "Unknown reason, please view the log to see details.";
         console.error(e);
       }
 
@@ -146,5 +137,5 @@ export default class Git {
     });
   }
   private static repos: Map<string, simplegit.SimpleGit> = new Map();
-  private static waitChain = Promise.resolve();
+  private static prWaitChain = Promise.resolve();
 }
