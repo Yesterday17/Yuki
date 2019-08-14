@@ -51,7 +51,7 @@ export default class Git {
     Git.repoCheckGenerator(dir, (repo) => repo.fetch("origin", ref))
 
   public static checkout = async (dir: string, branch: string) =>
-    Git.repoCheckGenerator(dir, (repo) => repo.checkout(branch))()
+    Git.repoCheckGenerator(dir, (repo) => repo.checkout(branch))
 
   public static push = async (dir: string) =>
     Git.repoCheckGenerator(dir, (repo) => repo.push())
