@@ -62,7 +62,9 @@ export default class Git {
   public static commit = async (dir: string, message: string) =>
     Git.repoCheckGenerator(dir, (repo) => repo.commit(message, undefined, {}))
 
-  public static branch = async (dir: string): Promise<string[]> =>
+  public static branch = async (
+    dir: string,
+  ): Promise<simplegit.BranchSummary> =>
     Git.repoCheckGenerator(dir, (repo) => repo.branch([]))
 
   public static async onPullRequestCreated(context: Context) {
@@ -88,8 +90,8 @@ export default class Git {
       try {
         await Git.init();
         await Git.pull("build");
-        const branches = await Git.branch("repo");
-        if (!branches.includes(`pull/${id}`)) {
+        const branches = (await Git.branch("repo")).branches;
+        if (branches[`pull/${id}`] === undefined) {
           await Git.pull("repo", `pull/${id}/head:pull/${id}`);
         }
         await Git.checkout("repo", `pull/${id}`);
