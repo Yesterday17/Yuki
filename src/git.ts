@@ -96,9 +96,9 @@ export default class Git {
         }
         await Git.checkout("repo", `pull/${id}`);
         await Git.pull("repo", `pull/${id}/head`);
-        child_process.execSync(`gitbook install ${path.resolve(".", "repo")}`);
+        child_process.execSync("yarn install", { cwd: path.resolve(".", "repo") });
         child_process.execSync(
-          `gitbook build ${path.resolve(".", "repo")} ${path.resolve(
+          `vuepress build ${path.resolve(".", "repo")} --dest ${path.resolve(
             ".",
             "build",
             String(id),
